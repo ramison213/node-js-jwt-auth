@@ -7,6 +7,6 @@ module.exports = {
         port: process.env.PORT || 3001
     },
     data: {
-        dbSource: process.env.DATA_BASE_SOURCE
+        dbSource: process.env.DATA_BASE_URL
     }
 }
