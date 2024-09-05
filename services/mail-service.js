@@ -1,4 +1,7 @@
-async function sendActivationEmail(to, link) {}
+async function sendActivationEmail(to, link) {
+
+
+}
 
 module.exports = {
     sendActivationEmail
