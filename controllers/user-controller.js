@@ -21,7 +21,10 @@ async function logout(req, res, next) {
 }
 
 async function activate(req, res, next) {
+    const activationLink = req.params.link;
+    await userService.activate(activationLink);
 
+    return res.redirect(process.env.CLIENT_URL);
 }
 
 async function refresh(req, res, next) {

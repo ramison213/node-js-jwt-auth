@@ -30,6 +30,18 @@ async function registration(email, password) {
     }
 }
 
+async function activate(activationLink) {
+    const user = await UserModel.findOne({ activationLink });
+
+    if (!user) {
+        throw new Error(`Isn't correct activation link ${activationLink}`);
+    }
+
+    user.isActivated = true;
+    await user.save();
+}
+
 module.exports = {
-    registration
+    registration,
+    activate
 }
