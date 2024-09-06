@@ -17,7 +17,8 @@ async function registration(email, password) {
     const activationLink = uuid.v4();
     const hashedPassword = await bcrypt.hash(password, 7);
     const user = await UserModel.create({ email, password: hashedPassword, activationLink });
-    await mailService.sendActivationEmail(email, activationLink);
+
+    await mailService.sendActivationEmail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
 
     const userDto = new UserDto(user);
     const tokens = generateTokens({ ...userDto });
