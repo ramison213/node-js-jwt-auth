@@ -4,14 +4,15 @@ const bcrypt = require('bcrypt');
 const uuid = require('uuid');
 const mailService = require('./mail-service');
 const { generateTokens } = require('./token-service');
-const UserDto = require("../dtos/user-dto");
-const tokenService = require("./token-service");
+const UserDto = require('../dtos/user-dto');
+const tokenService = require('./token-service');
+const ApiError = require('../errors/api-error');
 
 async function registration(email, password) {
     const candidate = await UserModel.findOne({ email });
 
     if (candidate) {
-        throw new Error(`Candidate with address ${email} already exists`);
+        throw ApiError.BadRequest(`Candidate with address ${email} already exists`);
     }
 
     const activationLink = uuid.v4();
@@ -34,7 +35,7 @@ async function activate(activationLink) {
     const user = await UserModel.findOne({ activationLink });
 
     if (!user) {
-        throw new Error(`Isn't correct activation link ${activationLink}`);
+        throw ApiError.BadRequest(`Isn't correct activation link ${activationLink}`);
     }
 
     user.isActivated = true;

@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const logger = require('./utils/logger')(path.basename(__filename));
 const { router } = require('./routers/index');
+const errorMiddleware = require('./middlewares/errro-middleware');
 
 const port = srvConfig.port;
 const dbSource = dataConfig.dbSource;
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 app.use('/api', router);
+app.use(errorMiddleware);
 
 mongoose.connect(dbSource)
     .then(() => logger.info('MongoDB connected'))

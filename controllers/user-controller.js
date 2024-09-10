@@ -1,5 +1,5 @@
 const path = require('path');
-const { withAsyncHandler } = require('../errors/errorHandlers');
+const { withAsyncHandler } = require('../errors/error-handlers');
 const logger = require('../utils/logger')(path.basename(__filename));
 const userService = require('../services/user-service');
 
@@ -23,7 +23,7 @@ async function logout(req, res, next) {
 async function activate(req, res, next) {
     const activationLink = req.params.link;
     await userService.activate(activationLink);
-
+    // redirect to frontend
     return res.redirect(process.env.CLIENT_URL);
 }
 
