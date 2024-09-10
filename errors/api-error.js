@@ -1,7 +1,4 @@
 module.exports = class ApiError extends Error {
-    status;
-    errors;
-
     constructor(status, msg, errors = []) {
         super(msg);
 

@@ -30,6 +30,7 @@ async function registration(email, password) {
         user: userDto
     }
 }
+
 async function login(email, password) {
     const user = await UserModel.findOne({ email });
 
@@ -64,8 +65,15 @@ async function activate(activationLink) {
     await user.save();
 }
 
+async function logout(refreshToken) {
+    const token = await tokenService.removeToken(refreshToken);
+
+    return token;
+}
+
 module.exports = {
     registration,
     login,
-    activate
+    activate,
+    logout
 }
