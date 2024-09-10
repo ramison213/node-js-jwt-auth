@@ -2,8 +2,16 @@ const path = require('path');
 const { withAsyncHandler } = require('../errors/error-handlers');
 const logger = require('../utils/logger')(path.basename(__filename));
 const userService = require('../services/user-service');
+const { validationResult } = require('express-validator');
+const ApiError = require('../errors/api-error');
 
-async function register(req, res, _next) {
+async function register(req, res, next) {
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()) {
+        return next(ApiError.BadRequest('Validation Error', errors.array()));
+    }
+
     const { email, password } = req.body;
     const userData = await userService.registration(email, password);
     // TODO change magic const to variable
