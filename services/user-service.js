@@ -20,6 +20,28 @@ async function registration(email, password) {
     const user = await UserModel.create({ email, password: hashedPassword, activationLink });
 
     await mailService.sendActivationEmail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
+    // TODO separate to function
+    const userDto = new UserDto(user);
+    const tokens = generateTokens({ ...userDto });
+    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
+    return {
+        ...tokens,
+        user: userDto
+    }
+}
+async function login(email, password) {
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+        throw ApiError.BadRequest(`User with ${email} was not found`);
+    }
+
+    const isPasswordOk = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordOk) {
+        throw ApiError.BadRequest(`Incorrect password`);
+    }
 
     const userDto = new UserDto(user);
     const tokens = generateTokens({ ...userDto });
@@ -44,5 +66,6 @@ async function activate(activationLink) {
 
 module.exports = {
     registration,
+    login,
     activate
 }
