@@ -44,11 +44,19 @@ async function activate(req, res, _next) {
     return res.redirect(process.env.CLIENT_URL);
 }
 
-async function refresh(req, res, next) {
+async function refresh(req, res, _next) {
+    const { refreshToken } = req.cookies;
+    const userData = await userService.refresh(refreshToken);
+    // TODO change magic const to variable
+    res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
 
+    return res.json(userData);
 }
 
 async function getUsers(req, res, next) {
+    const users = await userService.getAllUsers();
+
+    return res.json(users);
 }
 
 module.exports = {

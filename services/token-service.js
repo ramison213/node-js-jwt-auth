@@ -29,9 +29,40 @@ async function removeToken(refreshToken) {
     return tokenData;
 }
 
+async function findToken(refreshToken) {
+    const tokenData = await tokenModel.findOne({ refreshToken });
+
+    return tokenData;
+}
+
+function validateAccessToken(token) {
+    try {
+        const tokenData = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+
+        return tokenData;
+    } catch (e) {
+        return null;
+    }
+}
+
+function validateRefreshToken(token) {
+    try {
+        const tokenData = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+
+        return tokenData;
+    } catch (e) {
+        return null;
+    }
+}
+
+
+
 
 module.exports = {
     generateTokens,
     saveToken,
-    removeToken
+    removeToken,
+    validateAccessToken,
+    validateRefreshToken,
+    findToken
 }

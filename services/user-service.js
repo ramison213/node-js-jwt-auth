@@ -25,10 +25,7 @@ async function registration(email, password) {
     const tokens = generateTokens({ ...userDto });
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
 
-    return {
-        ...tokens,
-        user: userDto
-    }
+    return { ...tokens, user: userDto };
 }
 
 async function login(email, password) {
@@ -48,10 +45,7 @@ async function login(email, password) {
     const tokens = generateTokens({ ...userDto });
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
 
-    return {
-        ...tokens,
-        user: userDto
-    }
+    return { ...tokens, user: userDto };
 }
 
 async function activate(activationLink) {
@@ -71,9 +65,37 @@ async function logout(refreshToken) {
     return token;
 }
 
+async function refresh(refreshToken) {
+    if (!refreshToken) {
+        throw ApiError.UnauthorizedError();
+    }
+
+    const userData = tokenService.validateRefreshToken(refreshToken);
+    const tokenFromDb = tokenService.findToken(refreshToken);
+
+    if (!userData || !tokenFromDb) {
+        throw ApiError.UnauthorizedError();
+    }
+
+    const user = await UserModel.findById(userData.id);
+    const userDto = new UserDto(user);
+    const tokens = generateTokens({ ...userDto });
+    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
+    return { ...tokens, user: userDto };
+}
+
+async function getAllUsers() {
+    const users = await UserModel.find();
+
+    return users;
+}
+
 module.exports = {
     registration,
     login,
     activate,
-    logout
+    logout,
+    refresh,
+    getAllUsers
 }
